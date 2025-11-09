@@ -22,12 +22,13 @@ a:hover {
   color: #535bf2;
 }
 
+/* PERUBAHAN DI SINI:
+  Properti 'display: flex', 'place-items: center', 
+  'min-width', dan 'min-height' telah dihapus 
+  agar navbar menempel di bagian atas.
+*/
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
 }
 
 h1 {
