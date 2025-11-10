@@ -4,7 +4,7 @@ function App() {
   return (
     <nav className="navbar">
       <div className="navbar-brand">
-        <a href="/">LogoSaya</a>
+        <a href="/">LOGOSAYA</a>
       </div>
       <ul className="navbar-links">
         <li><a href="/">Home</a></li>

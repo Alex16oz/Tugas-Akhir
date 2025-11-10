@@ -4,16 +4,17 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #333;
+  background-color: #43179c;
   padding: 1rem 2rem;
-  color: white;
+  color: rgb(255, 255, 255);
 }
 
 .navbar-brand a {
-  color: white;
+  color: rgb(255, 255, 255);
   text-decoration: none;
-  font-size: 1.5rem;
+  font-size: 1.8rem;
   font-weight: bold;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .navbar-links {
