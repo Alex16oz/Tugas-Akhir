@@ -1,58 +1,32 @@
-import { useEffect, useState } from 'react';
-import { supabase } from './supabaseClient'; // Mengimpor client yang kita buat tadi
-import './App.css';
+import React from 'react';
+import './index.css'; // Memastikan file CSS di atas termuat
 
 function App() {
-  const [dataBarang, setDataBarang] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    // Fungsi async untuk mengambil data dari tabel 'Barang' di Supabase
-    async function ambilData() {
-      try {
-        setLoading(true);
-        const { data, error } = await supabase
-          .from('Barang') // Nama tabel utama yang Anda buat lewat skrip SQL sebelumnya
-          .select('*');
-
-        if (error) {
-          throw error;
-        }
-        
-        setDataBarang(data);
-      } catch (error) {
-        console.error("Gagal mengambil data dari database:", error.message);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    ambilData();
-  }, []);
-
   return (
-    <div className="App">
-      <h1>Sistem Informasi Toko & Inventori - Barokah Ekspres</h1>
-      <p>Status Jaringan Database: <strong>Terhubung Ke Supabase Successfully</strong></p>
-      
-      {loading ? (
-        <p>Sedang memuat data master barang...</p>
-      ) : (
-        <div>
-          <h3>Daftar Barang Konstruksi ({dataBarang.length} Jenis):</h3>
-          {dataBarang.length === 0 ? (
-            <p>Belum ada data barang. (Tabel masih kosong di database).</p>
-          ) : (
-            <ul>
-              {dataBarang.map((barang) => (
-                <li key={barang.id_barang}>
-                  {barang.nama_barang} - Rp {barang.harga_jual.toLocaleString('id-ID')} (Stok: {barang.stok})
-                </li>
-              ))}
-            </ul>
-          )}
+    <div>
+      {/* Navbar Section */}
+      <nav className="navbar">
+        <div className="navbar-container">
+          
+          {/* Sisi Kiri: Nama Toko */}
+          <div className="brand-name">
+            BAROKAH EKSPRES
+          </div>
+          
+          {/* Sisi Kanan: Tombol Login */}
+          <div>
+            <button type="button" className="btn-login">
+              Login
+            </button>
+          </div>
+
         </div>
-      )}
+      </nav>
+
+      {/* Main Content Area (Kosong sesuai instruksi) */}
+      <main className="main-content">
+        {/* Belum ditambahkan konten lain */}
+      </main>
     </div>
   );
 }
