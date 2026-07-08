@@ -1,0 +1,93 @@
+-- 1. Bersihkan tabel lama jika ada (menghindari konflik saat membuat ulang)
+DROP TABLE IF EXISTS Bayar_Hutang CASCADE;
+DROP TABLE IF EXISTS Transaksi_Jual_Detail CASCADE;
+DROP TABLE IF EXISTS Transaksi_Jual CASCADE;
+DROP TABLE IF EXISTS Barang CASCADE;
+DROP TABLE IF EXISTS Supplier CASCADE;
+DROP TABLE IF EXISTS Pelanggan CASCADE;
+DROP TABLE IF EXISTS Users CASCADE;
+
+-- 2. Bersihkan tipe enum lama jika ada
+DROP TYPE IF EXISTS user_role CASCADE;
+DROP TYPE IF EXISTS jenis_pembayaran CASCADE;
+DROP TYPE IF EXISTS status_pembayaran CASCADE;
+
+-- 3. Buat tipe ENUM kustom (PostgreSQL wajib mendefinisikan ini di awal)
+CREATE TYPE user_role AS ENUM ('Owner', 'Admin', 'Kasir');
+CREATE TYPE jenis_pembayaran AS ENUM ('Tunai', 'Hutang');
+CREATE TYPE status_pembayaran AS ENUM ('Lunas', 'Belum Lunas');
+
+-- 4. Tabel Users (Harus dibuat paling awal karena dirujuk oleh Transaksi_Jual)
+CREATE TABLE Users (
+    id_user SERIAL PRIMARY KEY,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    role user_role NOT NULL
+);
+
+-- 5. Tabel Pelanggan
+CREATE TABLE Pelanggan (
+    id_pelanggan SERIAL PRIMARY KEY,
+    nama VARCHAR(100) NOT NULL,
+    no_telp VARCHAR(15),
+    alamat TEXT
+);
+
+-- 6. Tabel Supplier
+CREATE TABLE Supplier (
+    id_supplier SERIAL PRIMARY KEY,
+    nama_supplier VARCHAR(100) NOT NULL,
+    no_telp VARCHAR(15),
+    alamat TEXT
+);
+
+-- 7. Tabel Barang
+CREATE TABLE Barang (
+    id_barang SERIAL PRIMARY KEY,
+    nama_barang VARCHAR(100) NOT NULL,
+    kategori VARCHAR(50),
+    harga_beli INT NOT NULL DEFAULT 0,
+    harga_jual INT NOT NULL DEFAULT 0,
+    stok INT NOT NULL DEFAULT 0,
+    stok_max INT DEFAULT 0,
+    stok_min INT DEFAULT 0,
+    satuan VARCHAR(20)
+);
+
+-- 8. Tabel Transaksi_Jual (Baru bisa dibuat aman setelah Users & Pelanggan ada)
+CREATE TABLE Transaksi_Jual (
+    no_faktur CHAR(20) PRIMARY KEY,
+    tanggal TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    id_user INT NOT NULL,
+    id_pelanggan INT,
+    total_harga INT NOT NULL DEFAULT 0,
+    jenis_bayar jenis_pembayaran NOT NULL,
+    status_lunas status_pembayaran NOT NULL,
+    CONSTRAINT fk_transaksi_user FOREIGN KEY (id_user) 
+        REFERENCES Users(id_user) ON DELETE RESTRICT,
+    CONSTRAINT fk_transaksi_pelanggan FOREIGN KEY (id_pelanggan) 
+        REFERENCES Pelanggan(id_pelanggan) ON DELETE SET NULL
+);
+
+-- 9. Tabel Transaksi_Jual_Detail
+CREATE TABLE Transaksi_Jual_Detail (
+    no_faktur CHAR(20),
+    id_barang INT,
+    qty INT NOT NULL DEFAULT 1,
+    subtotal INT NOT NULL DEFAULT 0,
+    PRIMARY KEY (no_faktur, id_barang),
+    CONSTRAINT fk_detail_faktur FOREIGN KEY (no_faktur) 
+        REFERENCES Transaksi_Jual(no_faktur) ON DELETE CASCADE,
+    CONSTRAINT fk_detail_barang FOREIGN KEY (id_barang) 
+        REFERENCES Barang(id_barang) ON DELETE RESTRICT
+);
+
+-- 10. Tabel Bayar_Hutang
+CREATE TABLE Bayar_Hutang (
+    id SERIAL PRIMARY KEY,
+    no_faktur CHAR(20) NOT NULL,
+    tanggal_bayar TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    jumlah_bayar INT NOT NULL DEFAULT 0,
+    CONSTRAINT fk_bayar_faktur FOREIGN KEY (no_faktur) 
+        REFERENCES Transaksi_Jual(no_faktur) ON DELETE CASCADE
+);

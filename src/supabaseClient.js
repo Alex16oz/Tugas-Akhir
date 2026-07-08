@@ -1,8 +1,13 @@
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from '@supabase/supabase-js';
 
-// Ambil variabel lingkungan yang Anda buat di langkah 3
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
+// Membaca variabel lingkungan dari file .env melalui enkapsulasi Vite
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-// Buat dan ekspor client Supabase
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+// Validasi sederhana untuk memastikan .env terbaca
+if (!supabaseUrl || !supabaseAnonKey) {
+  console.error("Error: Supabase URL atau Anon Key belum dikonfigurasi di file .env!");
+}
+
+// Menginisialisasi instansi klien Supabase tunggal (Singleton)
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);
